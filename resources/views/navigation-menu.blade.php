@@ -12,9 +12,19 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav me-auto">
-                <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
+                <x-nav-link href="{{ route('customer') }}" :active="request()->routeIs('customer')">
+                    {{ __('Customers') }}
                 </x-nav-link>
+                <x-nav-link href="{{ route('item') }}" :active="request()->routeIs('item')">
+                    {{ __('Items') }}
+                </x-nav-link>
+                <x-nav-link href="{{ route('receipt') }}" :active="request()->routeIs('receipt')">
+                    {{ __('Receipts') }}
+                </x-nav-link>
+                <x-nav-link href="{{ route('payment') }}" :active="request()->routeIs('payment')">
+                    {{ __('Payments') }}
+                </x-nav-link>
+
             </ul>
 
             <!-- Right Side Of Navbar -->
@@ -61,7 +71,7 @@
                     </x-slot>
                 </x-dropdown>
             @endif
-                
+
                 <li class="nav-item dropdown me-2 body-color">
                     <button class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme (auto)">
                         <svg class="bi my-1 theme-icon-active opacity-75 lightDarkSvg" height="16" width="16">
