@@ -28,19 +28,20 @@
                         <x-bs.input autocomplete="on" wire:model.blur='form.phone' type="tel" label="Teléfono:"
                             for="phone" :error="$errors->first('form.phone')" />
                     </div>
+
                     <div class="col-12 col-md-6">
-                        <x-bs.input autocomplete="on" wire:model.blur='form.paymentDate' type="date"
-                            label="Fecha de pago:" for="paymentDate" :error="$errors->first('form.paymentDate')" />
+                        <x-bs.select wire:model.blur='form.creditType' label="Tipo de crédito:" for="creditType"
+                            :key="['TEA' => 'TEA', 'TNA' => 'TNA']" option_title="Seleccione el tipo de crédito " :error="$errors->first('form.creditType')">
+                        </x-bs.select>
                     </div>
                     <div class="col-12 col-md-6">
                         <x-bs.input autocomplete="on" wire:model.blur='form.interestRate' type="number" step="0.01"
-                            min="0" max="1" label="Tasa de interés:" for="interestRate"
+                            min="0" max="100" label="Tasa de interés:" for="interestRate"
                             :error="$errors->first('form.interestRate')" />
                     </div>
                     <div class="col-12 col-md-6">
-                        <x-bs.input autocomplete="on" wire:model.blur='form.penaltyRate' type="number" step="0.01"
-                            min="0" max="1" label="Tasa de penalidad:" for="penaltyRate"
-                            :error="$errors->first('form.penaltyRate')" />
+                        <x-bs.input autocomplete="on" wire:model.blur='form.paymentDate' type="number" step="1"
+                            min="1" max="29" label="Día de pago:" for="paymentDate" :error="$errors->first('form.paymentDate')" />
                     </div>
                     <div class="col-12 col-md-6">
                         <x-bs.input autocomplete="on" wire:model.blur='form.creditLimit' type="number" step="1"

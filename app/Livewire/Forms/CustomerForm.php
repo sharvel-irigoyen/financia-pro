@@ -23,16 +23,16 @@ class CustomerForm extends Form
     #[Validate('required|digits:9')]
     public $phone;
 
-    #[Validate('required|date_format:Y-m-d', as:'fecha de pago')]
-    public $paymentDate;
+    #[Validate('required|in:TEA,TNA', as:'tipo de crédito')]
+    public $creditType='';
 
     #[Validate('required|numeric|between:0,1', as:'tasa de interés')]
     public $interestRate;
 
-    #[Validate('required|numeric|between:0,1', as:'tasa de penalidad')]
-    public $penaltyRate;
+    #[Validate('required|integer', as:'día de pago')]
+    public $paymentDate;
 
-    #[Validate('required|integer|min:0', as:'límite de crédito')]
+    #[Validate('required|integer|min:100', as:'límite de crédito')]
     public $creditLimit;
 
     public Customer $customer;
@@ -40,16 +40,20 @@ class CustomerForm extends Form
     public function save()
     {
         $this->validate();
-        Customer::create([
+        $customer=Customer::create([
             'name'                  => $this->name,
             'lastname'              => $this->lastname,
             'document'              => $this->document,
             'email'                 => $this->email,
             'phone'                 => $this->phone,
-            'payment_date'          => $this->paymentDate,
-            'interest_rate'         => $this->interestRate,
-            'penalty_interest_rate' => $this->penaltyRate,
-            'credit_limit'          => $this->creditLimit,
+        ]);
+
+        $customer->creditAccount()->create([
+            'credit_type' => $this->creditType,
+            'interest_rate' => $this->interestRate,
+            'balance' => 0,
+            'due_date' => $this->paymentDate,
+            'credit_limit' => $this->creditLimit,
         ]);
     }
 
@@ -62,10 +66,12 @@ class CustomerForm extends Form
             'document'              => $this->document,
             'email'                 => $this->email,
             'phone'                 => $this->phone,
-            'payment_date'          => $this->paymentDate,
-            'interest_rate'         => $this->interestRate,
-            'penalty_interest_rate' => $this->penaltyRate,
-            'credit_limit'          => $this->creditLimit,
+        ]);
+        $this->customer->creditAccount->update([
+            'credit_type' => $this->creditType,
+            'interest_rate' => $this->interestRate,
+            'due_date' => $this->paymentDate,
+            'credit_limit' => $this->creditLimit,
         ]);
     }
 
@@ -77,9 +83,10 @@ class CustomerForm extends Form
         $this->document=$this->customer->document;
         $this->email=$this->customer->email;
         $this->phone=$this->customer->phone;
-        $this->paymentDate=$this->customer->payment_date;
-        $this->interestRate=$this->customer->interest_rate;
-        $this->penaltyRate=$this->customer->penalty_interest_rate;
-        $this->creditLimit=$this->customer->credit_limit;
+        $this->creditType=$this->customer->creditAccount->credit_type;
+        $this->interestRate=$this->customer->creditAccount->interest_rate;
+        $this->balance=$this->customer->creditAccount->balance;
+        $this->paymentDate=$this->customer->creditAccount->due_date;
+        $this->creditLimit=$this->customer->creditAccount->credit_limit;
     }
 }

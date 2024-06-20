@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReceiptDetailController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,8 +26,19 @@ Route::middleware([
     Route::get('/', function () {
         return view('dashboard');
     })->name('dashboard');
-    Route::view('/items', 'items')->name('item');
+
+    Route::prefix('/items')->name('items.')->group(function () {
+        Route::view('/admin', 'items')->name('admin');
+        Route::view('/sell', 'sell')->name('sell');
+    });
+
     Route::view('/customer', 'customers')->name('customer');
-    Route::view('/receipt', 'receipts')->name('receipt');
+
+    Route::prefix('/receipts')->name('receipts.')->group(function () {
+        Route::view('/', 'receipts')->name('index');
+        Route::get('/detail/{id}', [ReceiptDetailController::class, 'index'])->name('detail');
+    });
+
     Route::view('/payment', 'payments')->name('payment');
+
 });

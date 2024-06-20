@@ -55,7 +55,7 @@ class Table extends Component
     public function render()
     {
         $data=[
-            'categories' => Category::paginate(5),
+            'categories' => Category::paginate(10),
         ];
         return view('livewire.category.table', $data);
     }

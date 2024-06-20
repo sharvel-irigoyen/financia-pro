@@ -15,11 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('receipt_id')->constrained()->onUpdate('cascade')->onDelete('restrict');
             $table->foreignId('item_id')->constrained()->onUpdate('cascade')->onDelete('restrict');
-            $table->decimal('interest', 10, 2)->nullable();
-            $table->integer('installments')->unsigned()->nullable();
-            $table->integer('actual_installment')->unsigned()->nullable();
-            $table->decimal('amount', 10, 2)->nullable();
-            $table->date('issue_date')->nullable();
+            $table->date('issue_date');
+            $table->integer('total_installment');
+            $table->string('grace_period_type', 20)->nullable();
+            $table->integer('grace_period')->nullable();
             $table->timestamps();
         });
     }

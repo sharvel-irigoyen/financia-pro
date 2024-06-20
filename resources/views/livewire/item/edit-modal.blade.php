@@ -21,7 +21,6 @@
                             aria-hidden="true"></span>
                         Editar</button>
                 </div>
-
             </form>
         </x-slot>
     </x-bs.modal>

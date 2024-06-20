@@ -13,15 +13,11 @@ return new class extends Migration {
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100)->nullable();
-            $table->string('lastname', 100)->nullable();
-            $table->string('document', 100)->nullable();
-            $table->string('email', 100)->nullable();
-            $table->string('phone', 100)->nullable();
-            $table->date('payment_date')->nullable();
-            $table->decimal('interest_rate', 5, 2)->nullable();
-            $table->decimal('penalty_interest_rate', 5, 2)->nullable();
-            $table->integer('credit_limit')->unsigned()->nullable();
+            $table->string('name', 100);
+            $table->string('lastname', 100);
+            $table->string('document', 10);
+            $table->string('email', 100);
+            $table->string('phone', 10);
             $table->timestamps();
         });
     }

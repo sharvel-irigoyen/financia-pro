@@ -9,4 +9,19 @@ class Receipt extends Model
 {
     use HasFactory;
     protected $guarded=[];
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function receiptDetails()
+    {
+        return $this->hasMany(ReceiptDetail::class);
+    }
+
+    public function paymentDetails()
+    {
+        return $this->hasMany(PaymentDetail::class);
+    }
 }

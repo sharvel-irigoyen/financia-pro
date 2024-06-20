@@ -44,7 +44,7 @@ class Table extends Component
     public function render()
     {
         $data=[
-            'customers'=>Customer::orderBy('updated_at')
+            'customers'=>Customer::with(['creditAccount'])->orderBy('updated_at', 'desc')
             ->paginate(10),
         ];
         return view('livewire.customer.table', $data);

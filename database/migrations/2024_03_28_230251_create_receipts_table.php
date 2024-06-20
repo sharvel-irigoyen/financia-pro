@@ -13,9 +13,11 @@ return new class extends Migration {
         Schema::create('receipts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained()->onUpdate('cascade')->onDelete('restrict');
-            $table->decimal('subtotal', 10, 2)->nullable();
-            $table->decimal('interest_total', 10, 2)->nullable();
-            $table->boolean('status')->nullable()->default(false);
+            $table->decimal('subtotal', 10, 2);
+            $table->decimal('interest_total', 10, 2);
+            $table->boolean('status');
+            $table->decimal('total', 10, 2);
+            $table->date('payment_date');
             $table->timestamps();
         });
     }

@@ -9,4 +9,10 @@ class PaymentDetail extends Model
 {
     use HasFactory;
     protected $guarded=[];
+
+
+    public function receipt()
+    {
+        return $this->belongsTo(Receipt::class);
+    }
 }

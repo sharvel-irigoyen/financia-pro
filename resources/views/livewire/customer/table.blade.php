@@ -11,9 +11,10 @@
                     <th>Documento</th>
                     <th>Correo</th>
                     <th>Teléfono</th>
-                    <th>Fecha de pago</th>
+                    <th>Tipo crédito</th>
                     <th>Tasa de interés</th>
-                    <th>Tasa de penalidad</th>
+                    <th>Crédito utilizado</th>
+                    <th>Día de pago</th>
                     <th>Límite de crédito</th>
                     <th>
                         <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
@@ -25,14 +26,15 @@
                 @forelse ($customers as $customer)
                     <tr wire:key="{{ $customer->id }}">
                         <th>{{ $customer->id }}</th>
-                        <td>{{ $customer->name }} {{ $customer->lastname }}</td>
+                        <td>{{ $customer->fullName }}</td>
                         <td>{{ $customer->document }}</td>
                         <td>{{ $customer->email }}</td>
                         <td>{{ $customer->phone }}</td>
-                        <td>{{ $customer->payment_date }}</td>
-                        <td>{{ $customer->interest_rate }}</td>
-                        <td>{{ $customer->penalty_interest_rate }}</td>
-                        <td>{{ $customer->credit_limit }}</td>
+                        <td>{{ $customer->creditAccount->credit_type }}</td>
+                        <td>{{ $customer->creditAccount->interest_rate }}</td>
+                        <td>{{ $customer->creditAccount->balance }}</td>
+                        <td>{{ $customer->creditAccount->due_date }}</td>
+                        <td>{{ $customer->creditAccount->credit_limit }}</td>
                         <td> <button data-bs-toggle="modal" data-bs-target="#edit-modal-{{ $customer->id }}"
                                 type="button" class="btn btn-sm btn-outline-primary"><i
                                     class="fa-regular fa-pen-to-square"></i></button>
