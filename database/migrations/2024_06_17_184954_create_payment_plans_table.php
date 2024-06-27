@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('is_overdue');
             $table->decimal('interest_amount', 10, 2);
             $table->decimal('amortization', 10, 2);
+            $table->decimal('remaining_balance', 10, 2);
             $table->decimal('installment', 10, 2);
             $table->timestamps();
         });

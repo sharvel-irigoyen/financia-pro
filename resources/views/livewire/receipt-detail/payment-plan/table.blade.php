@@ -10,15 +10,18 @@
                         Num Cuota
                     </th>
                     <th>
-                        Periodo de gracia
+                        Periodo de gracia ({{ $graceType }})
                     <th>
-                        Interés
+                        Interés (S/.)
                     </th>
                     <th>
-                        Cuota
+                        Cuota (S/.)
                     </th>
                     <th>
-                        Amortización
+                        Amortización (S/.)
+                    </th>
+                    <th>
+                        Saldo restante (S/.)
                     </th>
                     <th>
                         Mora
@@ -29,10 +32,11 @@
                 @forelse ($paymentPlans as $paymentPlan)
                     <tr wire:key="{{ $paymentPlan->id }}">
                         <td>{{ $paymentPlan->installment_number }}</td>
-                        <td>{{ $paymentPlan->is_period_grace }}</td>
+                        <td>{{ $paymentPlan->is_period_grace ? 'Si' : 'No' }}</td>
                         <td>{{ $paymentPlan->interest_amount }}</td>
                         <td>{{ $paymentPlan->installment }}</td>
                         <td>{{ $paymentPlan->amortization }}</td>
+                        <td>{{ $paymentPlan->remaining_balance }}</td>
                         <td>{{ $paymentPlan->is_overdue }}</td>
                     </tr>
                 @empty

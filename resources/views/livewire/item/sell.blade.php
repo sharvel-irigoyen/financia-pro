@@ -19,18 +19,21 @@
                     :error="$errors->first('installments')" />
             </div>
             <div class="col-6 col-sm-4">
-                <x-bs.select wire:model="grace_period_type" label="Tipo de gracia:" for="grace_period_type"
+                <x-bs.select wire:model.live="grace_period_type" label="Tipo de gracia:" for="grace_period_type"
                     option_title="Seleccione el tipo de gracia" :key="['Total' => 'Total', 'Parcial' => 'Parcial', 'Ninguno' => 'Ninguno']" :error="$errors->first('grace_period_type')" />
             </div>
-            <div class="col-6 col-sm-4">
-                <x-bs.input wire:model.lazy="grace_period" label="Periodo de gracia:" for="grace_period" :error="$errors->first('grace_period')" />
-            </div>
+            @if ($grace_period_type != 'Ninguno')
+                <div class="col-6 col-sm-4">
+                    <x-bs.input wire:model.live="grace_period" label="Periodo de gracia:" for="grace_period"
+                        :error="$errors->first('grace_period')" />
+                </div>
+            @endif
         </div>
 
-        <p>Interés: {{ $interest }}</p>
-        <p>Cuota mensual: {{ $installment }}</p>
-        <p>Precio: S/. {{ $item?->price ?? 0 }}</p>
-        <p>Precio total: {{ $total }}</p>
+        <p>Interés total: S/.{{ $interest }}</p>
+        <p>Cuota mensual (1ra): S/.{{ $installment }}</p>
+        <p>Precio inicial: S/. {{ $item?->price ?? 0 }}</p>
+        <p>Precio total: S/.{{ $total }}</p>
         <button wire:click="giveCredit" class="btn btn-outline-success btn-sm">
             <span wire:loading wire:target='giveCredit' class="spinner-border spinner-border-sm"
                 aria-hidden="true"></span>

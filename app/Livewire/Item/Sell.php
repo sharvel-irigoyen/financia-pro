@@ -11,34 +11,45 @@ use Livewire\Component;
 class Sell extends Component
 {
     public $isCredit;
+    public $installments = 1;
 
-    public $installments=1;
+    #[Validate('required', as: 'tipo de periodo de gracia')]
+    public $grace_period_type = 'Ninguno';
 
-    #[Validate('required|in:Parcial,Total', as:'tipo de periodo de gracia')]
-    public $grace_period_type='Ninguno';
-
-    #[Validate('required|integer|min:0|max:3 ', as:'periodo de gracia')]
-    public $grace_period=0;
+    #[Validate('required|integer|min:0|max:3', as: 'periodo de gracia')]
+    public $grace_period = 0;
 
     public $interest;
-
     public $installment;
-
     public $total;
 
-    public ?Item $item=null;
-    public ?Customer $customer=null;
+    public $TEM;
+
+
+    public ?Item $item = null;
+    public ?Customer $customer = null;
+
 
     #[On('item-selected')]
     public function handleItemSelected(Item $item)
     {
-        $this->item=$item;
+        $this->item = $item;
     }
 
     #[On('customer-selected')]
     public function handleCustomerSelected(Customer $customer)
     {
-        $this->customer=$customer;
+        $this->customer = $customer;
+    }
+
+    public function calculateTem()
+    {
+        $creditAccount = $this->customer->creditAccount;
+        $interestRate = $creditAccount->interest_rate;
+        $creditType = $creditAccount->credit_type;
+        $TEA = ($creditType === 'TNA') ? pow(1 + $interestRate / 365, 365) - 1 : $interestRate;
+        $TEM = pow(1 + $TEA, 1 / 12) - 1;
+        $this->TEM = $TEM;
     }
 
     public function sell()
@@ -47,25 +58,25 @@ class Sell extends Component
             return;
         }
 
-        $receipt=$this->customer->receipts()->create([
-            'subtotal'=>$this->item->price,
-            'interest_total'=>0,
-            'status'=>1,
-            'total'=>$this->item->price,
-            'payment_date'=>now(),
+        $receipt = $this->customer->receipts()->create([
+            'subtotal' => $this->item->price,
+            'interest_total' => 0,
+            'status' => 1,
+            'total' => $this->item->price,
+            'payment_date' => now(),
         ]);
 
         $receipt->receiptDetails()->create([
-            'item_id'=>$this->item->id,
-            'issue_date'=>now(),
-            'total_installment'=>0,
-            'grace_period_type'=>'Ninguno',
-            'grace_period'=>0,
+            'item_id' => $this->item->id,
+            'issue_date' => now(),
+            'total_installment' => 0,
+            'grace_period_type' => 'Ninguno',
+            'grace_period' => 0,
         ]);
 
         $receipt->paymentDetails()->create([
-            'issue_date'=>now(),
-            'amount'=>$this->item->price,
+            'issue_date' => now(),
+            'amount' => $this->item->price,
         ]);
     }
 
@@ -81,7 +92,9 @@ class Sell extends Component
             'grace_period' => 'required|integer|min:0|max:3',
         ]);
 
-        $this->calculateInterest();
+        // Calcular el total a pagar y el interés total
+
+        $this->updateTotals();
 
         $receipt = $this->customer->receipts()->create([
             'subtotal' => $this->item->price,
@@ -101,43 +114,48 @@ class Sell extends Component
 
         $this->customer->creditAccount()->increment('balance', $this->total);
 
-        $creditAccount = $this->customer->creditAccount;
-
-        $interestRate = $creditAccount->interest_rate;
-        $creditType = $creditAccount->credit_type;
-        $TEA = ($creditType === 'TNA') ? pow(1 + $interestRate / 365, 365) - 1 : $interestRate;
-
-        $TEM = pow(1 + $TEA, 1 / 12) - 1;
-
         $remaining_balance = $this->item->price;
         for ($i = 1; $i <= $this->installments; $i++) {
             $payment_date = now()->addMonths($i);
+            $isPeriodGrace = $i <= $this->grace_period;
 
-            $interest_amount = $remaining_balance * $TEM;
-            $amortization = $this->installment - $interest_amount;
-
-            if ($this->grace_period_type != 'Ninguno') {
-                $amortization = 0;
-                if ($this->grace_period_type === 'Total' && $i <= $this->grace_period) {
-                    $this->installment = 0;
-                } elseif ($this->grace_period_type === 'Parcial' && $i <= $this->grace_period) {
-                    $this->installment = round($interest_amount, 2);
-                }
-            } else {
-                $this->installment = round($this->installment, 2);
-            }
-
-            $remaining_balance -= $amortization;
+            // Calcular el registro de pago para la cuota actual
+            $paymentRecord = $this->calculateInstallment($remaining_balance, $i, $isPeriodGrace);
 
             $receiptDetails->paymentPlans()->create([
                 'installment_number' => $i,
                 'payment_date' => $payment_date,
-                'is_period_grace' => $this->grace_period_type != 'Ninguno' && $i <= $this->grace_period,
+                'is_period_grace' =>$isPeriodGrace,
                 'is_overdue' => false,
-                'interest_amount' => round($interest_amount, 2),
-                'amortization' => round($amortization, 2),
-                'installment' => $this->installment,
+                'interest_amount' => round($paymentRecord['interest'], 2),
+                'amortization' => round($paymentRecord['amortization'], 2),
+                'remaining_balance' => round($paymentRecord['remaining_balance'], 2),
+                'installment' => round($paymentRecord['installment'], 2),
             ]);
+
+            $remaining_balance = $paymentRecord['remaining_balance'];
+        }
+    }
+
+    public function updatedGracePeriodType()
+    {
+        $this->validate([
+            'grace_period_type' => 'required',
+        ]);
+
+        if ($this->validateItemCustomer()) {
+            $this->updateTotals();
+        }
+    }
+
+    public function updatedGracePeriod()
+    {
+        $this->validate([
+            'grace_period' => 'required|integer|min:0|max:3',
+        ]);
+
+        if ($this->validateItemCustomer()) {
+            $this->updateTotals();
         }
     }
 
@@ -147,43 +165,83 @@ class Sell extends Component
             'installments' => 'required|integer|min:1',
         ]);
         if ($this->validateItemCustomer()) {
-            $this->calculateInterest();
+            $this->updateTotals();
         }
     }
 
     public function updatedIsCredit()
     {
         if ($this->validateItemCustomer()) {
-            $this->calculateInterest();
+            $this->updateTotals();
         }
     }
 
-    private function calculateInterest()
+    private function updateTotals()
     {
-        $creditAccount = $this->customer->creditAccount;
-        $interestRate = $creditAccount->interest_rate;
-        $creditType = $creditAccount->credit_type;
+        $this->calculateTem();
+        $totals=$this->calculateTotal();
+        $this->interest=round($totals['interest'], 2);
+        $this->installment=round($this->calculateInstallment($this->item->price, 1, $this->grace_period)['installment'], 2); //1ra cuota
 
-        // Calcular la TEA
-        if ($creditType === 'TNA') {
-            $TEA = pow(1 + $interestRate / 365, 365) - 1;
+        $this->total=round($totals['total'], 2);
+    }
+
+    private function calculateInstallment($remaining_balance, $n, $isPeriodGrace = false)
+    {
+        $installments = $this->installments;
+        $installmentRemaining = $installments - $n + 1;
+        $gracePeriodType = $this->grace_period_type;
+
+        $interest=$remaining_balance * $this->TEM;
+
+        if ($isPeriodGrace) {
+            $amortization=0;
+            if ($gracePeriodType == 'Total') {
+                $installment = 0;
+                $remaining_balance += $interest;
+            } else {
+                $installment = $interest;
+            }
+
         } else {
-            $TEA = $interestRate;
+            $installment=round($remaining_balance * ($this->TEM * pow(1 + $this->TEM, $installmentRemaining)) / (pow(1 + $this->TEM, $installmentRemaining) - 1), 2);
+
+            $amortization=$installment - $interest;
+            $remaining_balance -= $amortization;
+        }
+        return [
+            'installment' => $installment,
+            'interest' => $interest,
+            'amortization'=>$amortization,
+            'remaining_balance'=>$remaining_balance
+        ];
+    }
+
+    private function calculateTotal()
+    {
+        $remaining_balance = $this->item->price;
+        $interest = 0;
+        $installment = 0;
+
+        for ($i = 1; $i <= $this->installments; $i++) {
+            // Determinar si el pago actual está en el período de gracia
+            $isPeriodGrace = $i <= $this->grace_period;
+
+            // Calcular el registro de pago para la cuota actual
+            $paymentRecord = $this->calculateInstallment($remaining_balance, $i, $isPeriodGrace);
+            // dump($paymentRecord);
+
+            $installment += $paymentRecord['installment'];
+            $interest += $paymentRecord['interest'];
+            // $amortization = $paymentRecord['amortization'];
+            $remaining_balance = $paymentRecord['remaining_balance'];
         }
 
-        // Calcular la TEM
-        $TEM = pow(1 + $TEA, 1 / 12) - 1;
-
-        $subtotal = $this->item->price;
-        $n = $this->installments;
-
-        // Calcular la cuota mensual constante usando el método francés
-        $this->installment = round($subtotal * ($TEM * pow(1 + $TEM, $n)) / (pow(1 + $TEM, $n) - 1), 2);
-
-        // Calcular el total a pagar y el interés total
-        $total = $this->installment * $n;
-        $this->interest = round($total - $subtotal, 2);
-        $this->total = round($total, 2);
+        return [
+            'total' => $installment + $interest,
+            'interest' => $interest,
+            'installment' => $installment,
+        ];
     }
 
     private function validateItemCustomer(): bool
@@ -197,6 +255,14 @@ class Sell extends Component
             $this->addError('customer', 'Cliente no seleccionado');
             return false;
         }
+
+        $balance = $this->customer->creditAccount->balance;
+        $creditLimit = $this->customer->creditAccount->credit_limit;
+
+        // if ($this->isCredit && $balance + $this->item->price > $creditLimit) {
+        //     $this->addError('item', 'El cliente ha excedido su límite de crédito');
+        //     return false;
+        // }
 
         return true;
     }

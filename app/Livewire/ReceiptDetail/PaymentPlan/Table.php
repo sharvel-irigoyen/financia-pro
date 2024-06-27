@@ -16,6 +16,7 @@ class Table extends Component
     {
         $data=[
             'paymentPlans'=>$this->receiptDetail->paymentPlans()->paginate(12),
+            'graceType' => $this->receiptDetail->grace_period_type,
         ];
         return view('livewire.receipt-detail.payment-plan.table', $data);
     }
