@@ -186,7 +186,7 @@ class Sell extends Component
         $this->total=round($totals['total'], 2);
     }
 
-    private function calculateInstallment($remaining_balance, $n, $isPeriodGrace = false)
+    public function calculateInstallment($remaining_balance, $n, $isPeriodGrace = false)
     {
         $installments = $this->installments;
         $installmentRemaining = $installments - $n + 1;

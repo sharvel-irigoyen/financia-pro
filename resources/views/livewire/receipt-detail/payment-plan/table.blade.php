@@ -7,7 +7,7 @@
             <thead>
                 <tr>
                     <th>
-                        Num Cuota
+                        Num. Cuota
                     </th>
                     <th>
                         Periodo de gracia ({{ $graceType }})
@@ -37,7 +37,7 @@
                         <td>{{ $paymentPlan->installment }}</td>
                         <td>{{ $paymentPlan->amortization }}</td>
                         <td>{{ $paymentPlan->remaining_balance }}</td>
-                        <td>{{ $paymentPlan->is_overdue }}</td>
+                        <td>{{ $paymentPlan->is_overdue ? 'Si' : 'No' }}</td>
                     </tr>
                 @empty
                     <tr>
