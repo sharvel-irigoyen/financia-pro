@@ -6,6 +6,14 @@
     </x-slot>
     <div>
         <div class="container mx-auto py-5 px-sm-5 px-lg-5">
+            <div class="col-12 col-xl-3 col-xxl-3 mb-4">
+                <h4>Soporte técnico</h4>
+                <a role="button" href="https://api.whatsapp.com/send?phone=51993994620" class="btn btn-outline-success btn mb-3">
+                    <i class="fa-brands fa-whatsapp fa-xl"></i> +51 993 994 620
+                </a>
+
+
+            </div>
             @if (Laravel\Fortify\Features::canUpdateProfileInformation())
                 @livewire('profile.update-profile-information-form')
 

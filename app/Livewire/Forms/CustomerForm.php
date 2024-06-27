@@ -17,7 +17,7 @@ class CustomerForm extends Form
     #[Validate('required', as:'documento')]
     public $document;
 
-    #[Validate('required|unique:users|email:filter')]
+    #[Validate('required|email:filter')]
     public $email;
 
     #[Validate('required|digits:9')]
@@ -39,6 +39,10 @@ class CustomerForm extends Form
 
     public function save()
     {
+        $this->validate([
+            'document' => 'unique:customers,document',
+            'email' => 'unique:customers,email',
+        ]);
         $this->validate();
         $customer=Customer::create([
             'name'                  => $this->name,
@@ -60,6 +64,7 @@ class CustomerForm extends Form
     public function update()
     {
         $this->validate();
+
         $this->customer->update([
             'name'                  => $this->name,
             'lastname'              => $this->lastname,

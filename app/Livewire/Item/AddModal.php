@@ -12,7 +12,7 @@ class AddModal extends Component
 {
     use LivewireAlert;
 
-    #[Validate('required', as: 'código')]
+    #[Validate('required|unique:items,code', as: 'código')]
     public $code;
 
     #[Validate('required', as: 'categoría')]
