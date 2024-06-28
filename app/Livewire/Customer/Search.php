@@ -13,7 +13,7 @@ class Search extends Component
 {
 
     #[Validate('required', as:'# documento')]
-    public $document='25588722';
+    public $document='87220648';
 
     public ?Customer $customer=null;
 

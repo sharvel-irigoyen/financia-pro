@@ -264,10 +264,10 @@ class Sell extends Component
         $balance = $this->customer->creditAccount->balance;
         $creditLimit = $this->customer->creditAccount->credit_limit;
 
-        // if ($this->isCredit && $balance + $this->item->price > $creditLimit) {
-        //     $this->addError('item', 'El cliente ha excedido su límite de crédito');
-        //     return false;
-        // }
+        if ($this->isCredit && $balance + $this->item->price > $creditLimit) {
+            $this->addError('item', 'El cliente ha excedido su límite de crédito');
+            return false;
+        }
 
         return true;
     }

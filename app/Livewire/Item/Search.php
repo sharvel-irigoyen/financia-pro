@@ -9,7 +9,7 @@ use Livewire\Component;
 class Search extends Component
 {
     #[Validate('required', as:'código del producto')]
-    public $code='ZR888';
+    public $code='RC579';
 
     public ?Item $item=null;
 
