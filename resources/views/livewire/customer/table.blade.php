@@ -27,7 +27,7 @@
                 @forelse ($customers as $customer)
                     <tr wire:key="{{ $customer->id }}">
                         <th>{{ $customer->id }}</th>
-                        <td> <span class="text-truncate d-inline-block" style="max-width: 100px;">{{ $customer->fullName }}</span></td>
+                        <td> <span class="text-truncate" style="max-width: 150px;">{{ $customer->fullName }}</span></td>
                         <td>{{ $customer->document }}</td>
                         <td>{{ $customer->email }}</td>
                         <td>{{ $customer->phone }}</td>

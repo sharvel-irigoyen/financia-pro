@@ -1,52 +1,25 @@
-version: "3.9"
-
-networks:
-  laravel:
-    driver: bridge
-
+version: '3.8'
 services:
-  nginx:
-    image: nginx:alpine
-    container_name: financia-pro-nginx
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "80:80"
-    volumes:
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - .:/var/www/app:delegated
-    depends_on:
-      - php
-      - mongo
-    networks:
-      - laravel
-
-  php:
+  financia-pro:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: financia-pro-php
-    restart: unless-stopped
-    tty: true
-    expose:
-      - "9000"
     volumes:
-      - .:/var/www/app:delegated
-    networks:
-      - laravel
-    depends_on:
-      - mongo
+      - .:/var/www/financia-pro
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SERVICE_NAME: financia-pro
 
   db:
     image: mysql:8.0
     container_name: financia-pro-mysql
     restart: unless-stopped
-    tty: true
     ports:
-      - "3307:3306"
+      - "3307:3307"
     environment:
       MYSQL_DATABASE: financia-pro
-      MYSQL_USER: root
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: password
     volumes:
@@ -54,18 +27,19 @@ services:
     networks:
       - laravel
 
-  mongo:
-    image: mongo:latest
-    container_name: financia-pro-mongo
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+  nginx:
+    image: elestio/nginx-auto-ssl
+    container_name: financia-pro-nginx
     volumes:
-      - mongodata:/data/db
+      - ./nginx-conf:/etc/nginx/conf.d
+      - ./logs:/var/log/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - financia-pro
+    environment:
+      DOMAINS: '159.203.111.15'  # Cambia 'localhost' por la IP del servidor si es necesario
     networks:
       - laravel
 

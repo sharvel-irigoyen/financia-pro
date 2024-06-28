@@ -1,46 +1,55 @@
-# use PHP 8.2
+# Usa la imagen base de PHP con FPM
 FROM php:8.2-fpm
 
-# Install common php extension dependencies
+# Instala dependencias y extensiones necesarias
 RUN apt-get update && apt-get install -y \
-    netcat-openbsd \
-    libfreetype-dev \
-    libjpeg62-turbo-dev \
-    libpng-dev \
-    zlib1g-dev \
-    libzip-dev \
+    git \
     unzip \
+    zip \
     curl \
-    gnupg \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install pdo pdo_mysql \
-    && docker-php-ext-install zip \
-    && docker-php-ext-install bcmath
-    # && pecl install mongodb \
-    # && docker-php-ext-enable mongodb
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    nodejs \
+    npm
 
-# Install Node.js and npm
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+# Instala extensiones PHP necesarias
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Set the working directory
-COPY . /var/www/app
-WORKDIR /var/www/app
+# Instala Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN chown -R www-data:www-data /var/www/app \
-    && chmod -R 775 /var/www/app/storage
+# Instala Node.js y npm
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
 
-# Install composer
-COPY --from=composer:2.6.5 /usr/bin/composer /usr/local/bin/composer
+# Configura el directorio de trabajo
+WORKDIR /var/www
 
-# Copy composer.json and package.json to workdir & install dependencies
-COPY composer.json ./
-COPY package.json ./
-RUN composer install && npm install
+# Clona tu proyecto desde el repositorio
+RUN git clone https://github.com/sharvel-irigoyen/financia-pro.git
 
-# Expose a port (if your application runs on a specific port)
-EXPOSE 3000
+# Instala las dependencias de Composer
+WORKDIR /var/www/financia-pro
+RUN composer install
 
-# Set the default command to run php-fpm
-CMD ["php-fpm"]
+# Copia el archivo de entorno
+COPY .env.example .env
+
+# Genera la clave de la aplicación
+RUN php artisan key:generate
+
+# Crea el enlace simbólico para el almacenamiento
+RUN php artisan storage:link
+
+# Instala las dependencias de npm
+RUN npm install
+
+# Compila los assets
+RUN npm run build
+
+# Expone el puerto 9000
+EXPOSE 9000
+
+
