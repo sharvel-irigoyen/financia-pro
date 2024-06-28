@@ -24,8 +24,6 @@ services:
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - dbdata:/var/lib/mysql
-    networks:
-      - laravel
 
   nginx:
     image: elestio/nginx-auto-ssl
@@ -40,11 +38,7 @@ services:
       - financia-pro
     environment:
       DOMAINS: '159.203.111.15'  # Cambia 'localhost' por la IP del servidor si es necesario
-    networks:
-      - laravel
 
 volumes:
   dbdata:
-    driver: local
-  mongodata:
     driver: local
