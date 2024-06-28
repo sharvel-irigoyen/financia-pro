@@ -37,6 +37,9 @@ RUN apt-get install -y nodejs
 
 # Instala las dependencias de Composer
 WORKDIR /var/www/financia-pro
+
+# Copia el código fuente de la aplicación
+COPY . /var/www/financia-pro
 RUN composer install --no-plugins --no-scripts --no-interaction
 
 # Copia el archivo de entorno
