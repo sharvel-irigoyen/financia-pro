@@ -13,6 +13,7 @@
                     <th>Teléfono</th>
                     <th>Tipo crédito</th>
                     <th>Tasa de interés</th>
+                    <th>Tasa moratoria</th>
                     <th>Crédito utilizado</th>
                     <th>Día de pago</th>
                     <th>Límite de crédito</th>
@@ -26,12 +27,13 @@
                 @forelse ($customers as $customer)
                     <tr wire:key="{{ $customer->id }}">
                         <th>{{ $customer->id }}</th>
-                        <td>{{ $customer->fullName }}</td>
+                        <td> <span class="text-truncate d-inline-block" style="max-width: 100px;">{{ $customer->fullName }}</span></td>
                         <td>{{ $customer->document }}</td>
                         <td>{{ $customer->email }}</td>
                         <td>{{ $customer->phone }}</td>
                         <td>{{ $customer->creditAccount->credit_type }}</td>
                         <td>{{ $customer->creditAccount->interest_rate }}</td>
+                        <td>{{ $customer->creditAccount->interest_arrears }}</td>
                         <td>{{ $customer->creditAccount->balance }}</td>
                         <td>{{ $customer->creditAccount->due_date }}</td>
                         <td>{{ $customer->creditAccount->credit_limit }}</td>

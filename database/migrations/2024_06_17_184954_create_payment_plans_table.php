@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('amortization', 10, 2);
             $table->decimal('remaining_balance', 10, 2);
             $table->decimal('installment', 10, 2);
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }

@@ -8,6 +8,7 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         {{-- light-dark-mode --}}
+        <script src="https://kit.fontawesome.com/de504e7beb.js" crossorigin="anonymous"></script>
         <script type="text/javascript" src="{{ asset('js/custom.js') }}"></script>
 
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">

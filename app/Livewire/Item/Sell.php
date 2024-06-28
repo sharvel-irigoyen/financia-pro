@@ -23,6 +23,9 @@ class Sell extends Component
     public $installment;
     public $total;
 
+    public $firstInstallmentDate;
+    public $lastInstallmentDate;
+
     public $TEM;
 
 
@@ -101,7 +104,7 @@ class Sell extends Component
             'interest_total' => $this->interest,
             'status' => 0, // Pendiente
             'total' => $this->total,
-            'payment_date' => now(),
+            'payment_date' => now()->addMonths($this->installments)->setDay($this->customer->creditAccount->due_date),
         ]);
 
         $receiptDetails = $receipt->receiptDetails()->create([
@@ -116,7 +119,7 @@ class Sell extends Component
 
         $remaining_balance = $this->item->price;
         for ($i = 1; $i <= $this->installments; $i++) {
-            $payment_date = now()->addMonths($i);
+            $payment_date = now()->addMonths($i)->setDay($this->customer->creditAccount->due_date);
             $isPeriodGrace = $i <= $this->grace_period;
 
             // Calcular el registro de pago para la cuota actual
@@ -135,6 +138,7 @@ class Sell extends Component
 
             $remaining_balance = $paymentRecord['remaining_balance'];
         }
+        $this->dispatch('payment-credit-registered');
     }
 
     public function updatedGracePeriodType()
@@ -182,8 +186,9 @@ class Sell extends Component
         $totals=$this->calculateTotal();
         $this->interest=round($totals['interest'], 2);
         $this->installment=round($this->calculateInstallment($this->item->price, 1, $this->grace_period)['installment'], 2); //1ra cuota
-
         $this->total=round($totals['total'], 2);
+        $this->firstInstallmentDate=now()->addMonths(1)->setDay($this->customer->creditAccount->due_date);
+        $this->lastInstallmentDate=now()->addMonths($this->installments)->setDay($this->customer->creditAccount->due_date);
     }
 
     public function calculateInstallment($remaining_balance, $n, $isPeriodGrace = false)

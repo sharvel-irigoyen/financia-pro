@@ -22,7 +22,9 @@
                         Total
                     </th>
                     <th>
-                        Día de pago
+                        Fecha de pago
+                    <th>
+                        Estado
                     </th>
                     <th>
                         Acción
@@ -38,7 +40,8 @@
                         <td>{{ $receipt->subtotal }}</td>
                         <td>{{ $receipt->interest_total }}</td>
                         <td>{{ $receipt->total }}</td>
-                        <td>{{ $receipt->due_date }}</td>
+                        <td>{{ $receipt->payment_date }}</td>
+                        <td>{{ $receipt->status ? 'Pagado' : 'Pendiente' }}</td>
                         <td>
 
                             <a role="button" href="{{ route('receipts.detail', ['id' => $receipt->id]) }}"

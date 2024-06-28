@@ -14,7 +14,7 @@ class CustomerForm extends Form
     #[Validate('required', as:'apellidos')]
     public $lastname;
 
-    #[Validate('required', as:'documento')]
+    #[Validate('required|digits:8', as:'documento')]
     public $document;
 
     #[Validate('required|email:filter')]
@@ -29,7 +29,7 @@ class CustomerForm extends Form
     #[Validate('required|numeric|between:0,1', as:'tasa de interés')]
     public $interestRate;
 
-    #[Validate('required|integer', as:'día de pago')]
+    #[Validate('required|integer|min:1|max:29', as:'día de pago')]
     public $paymentDate;
 
     #[Validate('required|integer|min:100', as:'límite de crédito')]

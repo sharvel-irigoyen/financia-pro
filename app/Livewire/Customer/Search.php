@@ -5,6 +5,7 @@ namespace App\Livewire\Customer;
 use App\Livewire\Item\Sell;
 use App\Livewire\Payment\RegisterPayment;
 use App\Models\Customer;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -12,7 +13,7 @@ class Search extends Component
 {
 
     #[Validate('required', as:'# documento')]
-    public $document='9019118026';
+    public $document='25588722';
 
     public ?Customer $customer=null;
 
@@ -25,15 +26,14 @@ class Search extends Component
         $this->customer = Customer::where('document', $this->document)->first();
 
         if ($this->customer) {
-            $this->dispatch('customer-selected', customer: $this->customer)->to(Sell::class);
-            $this->dispatch('customer-selected', customer: $this->customer)->to(RegisterPayment::class);
+        $this->dispatch('customer-selected', customer: $this->customer);
         } else {
             $this->customer = null;
         }
     }
 
-
-
+    #[On('payment-registered')]
+    #[On('payment-credit-registered')]
     public function render()
     {
         $data=[

@@ -13,6 +13,7 @@ class RegisterOverdue extends Component
     public $installments=[];
 
     public $TEM;
+    public $TEMM;
 
     public ?ReceiptDetail $receiptDetail = null;
 
@@ -39,7 +40,7 @@ class RegisterOverdue extends Component
             $remaining_balance = $this->receiptDetail->item->price;
 
             foreach ($this->receiptDetail->paymentPlans as $i => $plan) {
-                $payment_date = now()->addMonths($i + 1);
+
                 $isPeriodGrace = $i + 1 <= $this->receiptDetail->grace_period;
 
                 // Calcular el registro de pago para la cuota actual
@@ -66,10 +67,15 @@ class RegisterOverdue extends Component
     {
         $creditAccount = $this->receiptDetail->receipt->customer->creditAccount;
         $interestRate = $creditAccount->interest_rate;
+        $interestArrears = $creditAccount->interest_arrears;
         $creditType = $creditAccount->credit_type;
         $TEA = ($creditType === 'TNA') ? pow(1 + $interestRate / 365, 365) - 1 : $interestRate;
         $TEM = pow(1 + $TEA, 1 / 12) - 1;
+
+        $TEMA= ($creditType === 'TNA') ? pow(1 + $interestArrears / 365, 365) - 1 : $interestArrears;
+        $TEMM = pow(1 + $TEMA, 1 / 12) - 1;
         $this->TEM = $TEM;
+        $this->TEMM = $TEMM;
     }
 
     public function calculateInstallment($remaining_balance, $n, $isPeriodGrace = false)
@@ -87,7 +93,7 @@ class RegisterOverdue extends Component
             $remaining_balance += $interest;
         } elseif ($gracePeriodType=='Total' && !$isPeriodGrace && $isOverdue) {
             $amortization=0;
-            $installment=round($remaining_balance * ($this->TEM * pow(1 + $this->TEM, $installmentRemaining)) / (pow(1 + $this->TEM, $installmentRemaining) - 1), 2);
+            $installment=round($remaining_balance * ($this->TEMM * pow(1 + $this->TEMM, $installmentRemaining)) / (pow(1 + $this->TEMM, $installmentRemaining) - 1), 2);
             $remaining_balance += $interest;
         } elseif ($gracePeriodType=='Total' && !$isPeriodGrace && !$isOverdue) {
             $installment=round($remaining_balance * ($this->TEM * pow(1 + $this->TEM, $installmentRemaining)) / (pow(1 + $this->TEM, $installmentRemaining) - 1), 2);
@@ -100,7 +106,7 @@ class RegisterOverdue extends Component
             $installment = $interest;
         } elseif ($gracePeriodType=='Parcial' && !$isPeriodGrace && $isOverdue) {
             $amortization=0;
-            $installment=round($remaining_balance * ($this->TEM * pow(1 + $this->TEM, $installmentRemaining)) / (pow(1 + $this->TEM, $installmentRemaining) - 1), 2);
+            $installment=round($remaining_balance * ($this->TEMM * pow(1 + $this->TEMM, $installmentRemaining)) / (pow(1 + $this->TEMM, $installmentRemaining) - 1), 2);
             $remaining_balance += $interest;
         } elseif ($gracePeriodType=='Parcial' && !$isPeriodGrace && !$isOverdue) {
             $installment=round($remaining_balance * ($this->TEM * pow(1 + $this->TEM, $installmentRemaining)) / (pow(1 + $this->TEM, $installmentRemaining) - 1), 2);
@@ -110,7 +116,8 @@ class RegisterOverdue extends Component
 
         if ($gracePeriodType=='Ninguno' && $isOverdue) {
             $amortization=0;
-            $installment=round($remaining_balance * ($this->TEM * pow(1 + $this->TEM, $installmentRemaining)) / (pow(1 + $this->TEM, $installmentRemaining) - 1), 2);
+
+            $installment=round($remaining_balance * ($this->TEMM * pow(1 + $this->TEMM, $installmentRemaining)) / (pow(1 + $this->TEMM, $installmentRemaining) - 1), 2);
             $remaining_balance += $interest;
         } elseif ($gracePeriodType=='Ninguno' && !$isOverdue) {
             $installment=round($remaining_balance * ($this->TEM * pow(1 + $this->TEM, $installmentRemaining)) / (pow(1 + $this->TEM, $installmentRemaining) - 1), 2);

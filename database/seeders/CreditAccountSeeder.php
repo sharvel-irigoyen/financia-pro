@@ -26,6 +26,7 @@ class CreditAccountSeeder extends Seeder
                 'customer_id' => $customerId,
                 'credit_type' => $faker->randomElement(['TEA', 'TNA']),
                 'interest_rate' => $faker->randomFloat(2, 0.01, 0.30),
+                'interest_arrears' => $faker->randomFloat(2, 0.31, 0.50),
                 'balance' => 0,
                 'due_date' => $faker->numberBetween(1, 29),
                 // 'grace_period_type' => $faker->randomElement(['none', 'partial', 'full']),

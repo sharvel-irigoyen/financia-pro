@@ -42,3 +42,5 @@ Route::middleware([
     Route::view('/payment', 'payments')->name('payment');
 
 });
+
+Route::view('/customers/receipts', 'customers.receipts')->name('customers');

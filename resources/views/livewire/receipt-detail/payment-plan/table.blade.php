@@ -24,7 +24,13 @@
                         Saldo restante (S/.)
                     </th>
                     <th>
+                        Fecha de pago
+                    </th>
+                    <th>
                         Mora
+                    </th>
+                    <th>
+                        Estado
                     </th>
                 </tr>
             </thead>
@@ -37,7 +43,9 @@
                         <td>{{ $paymentPlan->installment }}</td>
                         <td>{{ $paymentPlan->amortization }}</td>
                         <td>{{ $paymentPlan->remaining_balance }}</td>
+                        <td>{{ $paymentPlan->payment_date }}</td>
                         <td>{{ $paymentPlan->is_overdue ? 'Si' : 'No' }}</td>
+                        <td>{{ $paymentPlan->status ? 'Pagado' : 'Pendiente' }}</td>
                     </tr>
                 @empty
                     <tr>

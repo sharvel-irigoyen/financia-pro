@@ -20,6 +20,7 @@
                 <p>Teléfono: {{ $customer->phone }}</p>
                 <p>Tipo de crédito: {{ $customer->creditAccount->credit_type }}</p>
                 <p>Tasa de interés: {{ $customer->creditAccount->interest_rate }}</p>
+                <p>Tasa moratoria: {{ $customer->creditAccount->interest_arrears }}</p>
                 <p>Crédito utilizado: {{ $customer->creditAccount->balance }}</p>
                 <p>Día de pago: {{ $customer->creditAccount->due_date }}</p>
                 <p>Límite de crédito: {{ $customer->creditAccount->credit_limit }}</p>

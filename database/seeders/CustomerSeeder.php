@@ -15,7 +15,7 @@ class CustomerSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create();
+        $faker = Faker::create('es_PE');
 
         for ($i = 0; $i < 30; $i++) {
             $createdAt = Carbon::now()->subDays(rand(0, 365));
@@ -24,7 +24,7 @@ class CustomerSeeder extends Seeder
             DB::table('customers')->insert([
                 'name' => $faker->firstName,
                 'lastname' => $faker->lastName,
-                'document' => $faker->unique()->numerify('##########'), // 10 digit document number
+                'document' => $faker->unique()->dni(), // DNI is a Peruvian ID
                 'email' => $faker->unique()->safeEmail,
                 'phone' => $faker->numerify('9########'), // 9 digit phone number
                 'created_at' => $createdAt,

@@ -34,6 +34,8 @@
         <p>Cuota mensual (1ra): S/.{{ $installment }}</p>
         <p>Precio inicial: S/. {{ $item?->price ?? 0 }}</p>
         <p>Precio total: S/.{{ $total }}</p>
+        <p>Fecha 1ra cuota: {{ $firstInstallmentDate->toDateString() }}</p>
+        <p>Fecha última cuota: {{ $lastInstallmentDate->toDateString() }}</p>
         <button wire:click="giveCredit" class="btn btn-outline-success btn-sm">
             <span wire:loading wire:target='giveCredit' class="spinner-border spinner-border-sm"
                 aria-hidden="true"></span>
