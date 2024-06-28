@@ -25,10 +25,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 
 # Configura el directorio de trabajo
-WORKDIR /var/www
+# WORKDIR /var/www
 
 # Clona tu proyecto desde el repositorio
-RUN git clone https://github.com/sharvel-irigoyen/financia-pro.git
+# RUN git clone https://github.com/sharvel-irigoyen/financia-pro.git
 
 # Instala las dependencias de Composer
 WORKDIR /var/www/financia-pro
@@ -51,5 +51,3 @@ RUN npm run build
 
 # Expone el puerto 9000
 EXPOSE 9000
-
-
