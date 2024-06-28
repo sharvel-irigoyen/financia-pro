@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 services:
   financia-pro:
     build:
@@ -40,8 +40,6 @@ services:
       - financia-pro
     environment:
       DOMAINS: '159.203.111.15'  # Cambia 'localhost' por la IP del servidor si es necesario
-    networks:
-      - laravel
 
 volumes:
   dbdata:
