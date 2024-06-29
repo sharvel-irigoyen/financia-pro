@@ -51,6 +51,8 @@ RUN php artisan key:generate
 # Crea el enlace simbólico para el almacenamiento
 RUN php artisan storage:link
 
+RUN chmod -R 777 storage bootstrap
+
 # Instala las dependencias de npm
 RUN npm install
 
