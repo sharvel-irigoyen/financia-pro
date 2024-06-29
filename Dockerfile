@@ -52,7 +52,7 @@ RUN php artisan key:generate
 RUN php artisan storage:link
 
 # Permisos de escritura
-RUN chmod -R 777 storage bootstrap
+RUN chmod 777 -R storage bootstrap
 
 # Instala las dependencias de npm
 RUN npm install
