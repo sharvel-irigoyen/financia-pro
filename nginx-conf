@@ -1,5 +1,6 @@
 server {
     listen 80;
+    listen 443 ssl; 
     server_name 159.203.111.15;
 
     root /var/www/financia-pro/public;
