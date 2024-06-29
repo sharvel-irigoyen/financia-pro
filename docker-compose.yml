@@ -6,9 +6,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/var/www/financia-pro
-    ports:
-      - "80:80"
-      - "443:443"
     environment:
       SERVICE_NAME: financia-pro
 
